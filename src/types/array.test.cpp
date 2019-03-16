@@ -14,10 +14,14 @@ void testContructor() {
     Array<int> b;
     assert(b.length() == 0);
 
+    // Should create with one item
+    Array<int> c(1);
+    assert(c.length() == 1);
+
     // Should set correct values
     const int item = 1;
-    Array<int> c(item);
-    assert(c.get(0) == item);
+    Array<int> d(item);
+    assert(d.get(0) == item);
 }
 
 void testPop() {

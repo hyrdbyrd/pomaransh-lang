@@ -7,10 +7,11 @@ namespace Pomaransh {
     template<typename T>
     class Array {
         public:
-            template <typename ...REST>
+            template<typename ...REST>
             Array(const T first, const REST &...rest) {
                 this->push(first, rest...);
             }
+            // Don't delete - for empty contructor
             Array() {}
 
             int length() {
