@@ -70,7 +70,6 @@ const logResult = () => {
     });
 
     let hasError = false;
-
     testCases.forEach(({ error, file, message, timeDiff, fileName }) => {
         const color = error ? 'red' : 'green';
         hasError = hasError || error;
@@ -82,19 +81,20 @@ const logResult = () => {
         `)));
     });
 
-    if (hasError)
-        process.exit(1);
-    else
-        process.exit(0);
+    if (hasError) process.exit(1);
+    else process.exit(0);
 }
 
-const files = findTests(resolve(__dirname, process.env.SOURCE_PATH));
 // Env from .env file
-const { COMPILER, OPTIONS, OUT_EXTENSION } = process.env;
+const { COMPILER, OPTIONS, OUT_EXTENSION, SOURCE_PATH } = process.env;
 
+const files = findTests(resolve(__dirname, SOURCE_PATH));
 files.forEach((file, idx) => {
-    const parsedPath = file.split('/').filter(Boolean);
-    const fileName = parsedPath.lastItem.replace(/\.(c|h)(pp)?$/, `.${OUT_EXTENSION}`);
+    const fileName = file
+        .split('/')
+        .filter(Boolean)
+        .lastItem
+        .replace(/\.(c|h)(pp|c)?$/, `.${OUT_EXTENSION}`);
 
     const compileProcess = spawn(COMPILER, [OPTIONS, '-o', fileName, file]);
 
@@ -104,24 +104,13 @@ files.forEach((file, idx) => {
 
         const startExec = Date.now();
         exec(`./${fileName}`, err => {
-            const timeDiff = `${(Date.now() - startExec) / 1000}s.`;
-
-            if (err)
-                testCases.push({
-                    file,
-                    fileName,
-                    error: true,
-                    message: `Test Failed: ${err.message}`,
-                    timeDiff
-                });
-            else
-                testCases.push({
-                    file,
-                    fileName,
-                    error: false,
-                    message: `Test Passed`,
-                    timeDiff
-                });
+            testCases.push({
+                file,
+                fileName,
+                error: Boolean(err),
+                message: err ? `Test Failed: ${err.message}` : `Test Passed`,
+                timeDiff: `${(Date.now() - startExec) / 1000}s.`
+            });
 
             if (idx === files.lastIdx) logResult();
         });
