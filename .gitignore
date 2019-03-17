@@ -6,3 +6,5 @@
 *.out
 *.html
 *.s
+node_modules
+/temp*
