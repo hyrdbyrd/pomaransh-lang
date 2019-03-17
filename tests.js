@@ -7,12 +7,23 @@ const { resolve } = require('path');
 const { spawn, exec } = require('child_process');
 
 // Array.prototype.lastIem
-Object.defineProperty(Array.prototype, 'lastItem', {
-    get() {
-        const len = this.length;
-        if (len === 0) return undefined;
+// Array.prototype.lastIdx
+Object.defineProperties(Array.prototype, {
+    lastItem: {
+        get() {
+            const len = this.length;
+            if (len === 0) return undefined;
 
-        return this[len - 1];
+            return this[len - 1];
+        }
+    },
+    lastIdx: {
+        get() {
+            const len = this.length;
+            if (len === 0) return 0;
+
+            return len - 1;
+        }
     }
 });
 
@@ -42,8 +53,8 @@ const findTests = inputPath => {
     return testFiles;
 };
 
-let testCases = [];
-let failedCompiles = [];
+const testCases = [];
+const failedCompiles = [];
 
 const trimLeft = str =>
     str
@@ -110,7 +121,7 @@ files.forEach((file, idx) => {
                     timeDiff
                 });
 
-            if (idx === files.length - 1) logResult();
+            if (idx === files.lastIdx) logResult();
         });
     });
 });
