@@ -10,6 +10,7 @@ const { spawn, exec } = require('child_process');
 // Array.prototype.lastIdx
 Object.defineProperties(Array.prototype, {
     lastItem: {
+        enumerable: false,
         get() {
             const len = this.length;
             if (len === 0) return undefined;
@@ -18,6 +19,7 @@ Object.defineProperties(Array.prototype, {
         }
     },
     lastIdx: {
+        enumerable: false,
         get() {
             const len = this.length;
             if (len === 0) return 0;
