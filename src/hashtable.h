@@ -9,79 +9,66 @@
 #define HASH_SIZE 8
 
 // For create one hash item
-#define HashInitilize memoryType(struct DataItem)
-
+#define HashInitilize memoryType(struct HashItem)
 #define CreateHashTable(item) Hash item[HASH_SIZE] = {};
-
 #define CreateHashItem(item) Hash item = HashInitilize;
 
 // @TODO: replace to 'any' type
 typedef int dataVal;
 // @TODO replace to string type
-typedef int keyVal;
+typedef string keyVal;
 
-struct DataItem {
+struct HashItem {
    dataVal data;
-   keyVal key;
+   string key;
 };
 
-typedef struct DataItem* Hash;
-
-int hashCode(int key) {
-   return key % HASH_SIZE;
-}
+typedef struct HashItem* Hash;
 
 bool scmp(char* a, char* b) {
-   if (strcmp(a, b)) return true;
+   if (!strcmp(a, b)) return true;
    return false;
 }
 
-int get(Hash *self, int key) {
-   int hashIndex = hashCode(key);
-
-   while(self[hashIndex] != NULL) {
-      if(self[hashIndex]->key == key)
-         return self[hashIndex]->data;
-
-      hashIndex++;
-      hashIndex %= HASH_SIZE;
+// @TODO O(n) -> O(log(n))
+int get(Hash *self, keyVal key) {
+   int i;
+   for (i = 0; i < HASH_SIZE; i++) {
+      if (self[i] == NULL) continue;
+      if (scmp(self[i]->key, key)) return self[i]->data;
    }
 
    return NULL;
 }
 
-void insert(Hash *self, int key, int data) {
+// @TODO O(n) -> O(log(n))
+void insert(Hash *self, keyVal key, int data) {
    CreateHashItem(item);
 
    item->data = data;
    item->key = key;
 
-   int hashIndex = hashCode(key);
+   int i;
+   for (i = 0; self[i] != NULL; i++);
 
-   while(self[hashIndex] != NULL && self[hashIndex]->key != -1) {
-      hashIndex++;
-      hashIndex %= HASH_SIZE;
-   }
-
-   self[hashIndex] = item;
+   if (self[i] != NULL) printf("Object size limit is %d", HASH_SIZE);
+   else self[i] = item;
 }
 
-dataVal del(Hash *self, int key) {
-   int hashIndex = hashCode(key);
-
-   while(self[hashIndex] != NULL) {
-      if(self[hashIndex]->key == key) {
-         dataVal temp = self[hashIndex]->data;
-         self[hashIndex] = NULL;
-
-         return temp;
-      }
-
-      hashIndex++;
-      hashIndex %= HASH_SIZE;
+// @TODO O(n) -> O(log(n))
+dataVal del(Hash *self, keyVal key) {
+   int i;
+   for (i = 0; i < HASH_SIZE; i++) {
+      if (self[i] == NULL) continue;
+      else if (scmp(self[i]->key, key)) break;
    }
 
-   return NULL;
+   if (self[i] == NULL) return NULL;
+
+   dataVal temp = self[i]->data;
+   self[i] = NULL;
+
+   return temp;
 }
 
 void displayHashTable(Hash *self) {
@@ -90,7 +77,7 @@ void displayHashTable(Hash *self) {
    printf("{\n");
    for(i = 0; i < HASH_SIZE; i++) {
       if (self[i] != NULL) {
-         printf("  %d: %d\n", self[i]->key, self[i]->data);
+         printf("  %s: %d\n", self[i]->key, self[i]->data);
       }
    }
    printf("}\n");
@@ -99,28 +86,27 @@ void displayHashTable(Hash *self) {
 int main() {
    CreateHashTable(table);
 
-   insert(table, 2, 23);
+   displayHashTable(table);
+
+   const string key = "key1";
+
+   insert(table, key, 1);
+   insert(table, "key2", 2);
+   insert(table, "key3", 3);
+   insert(table, "key4", 4);
 
    displayHashTable(table);
 
-   const int key = 2;
-
    int item = get(table, key);
 
-   if(item != NULL) {
-      printf("Element found: %d\n", item);
-   } else {
-      printf("ERROR: Element not found\n");
-   }
+   if(item != NULL) printf("Got item {%d}\n", item);
+   else printf("Error: no exists\n");
 
    del(table, key);
    item = get(table, key);
 
-   if(item == NULL) {
-      printf("Element found: %d\n", item);
-   } else {
-      printf("ERROR: Element not found\n");
-   }
+   if (item == NULL) printf("Deleted\n");
+   else printf("Error: Not Deleted {%d}\n", item);
 
    return 0;
 }
