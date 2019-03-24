@@ -1,25 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "bool.h"
 
 #define STACK_MAX_SIZE 256
 #define IGCT 8
 
-// Helpers for boolean
-#define true 1
-#define false 0
-
-/**
- * # Docs
- * ## reference &
- * ## pointer *
- * ### * <- &;
- * #### any *variable = &anotherVar;
- */
-
 #define unusedVariable(variable) ((void)variable)
-
-// Define boolean type
-typedef unsigned char bool;
 
 // Defined types
 typedef enum { INT, TWIN } ObjectType;
