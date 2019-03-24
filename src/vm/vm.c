@@ -81,11 +81,7 @@ VM *newVM() {
     return vm;
 }
 
-/**
- * @todo - rewrite withour recursion
- * @throws - stack overflow
- * @example  ... <- tail <- * -> head -> ...
- */
+/** @example  ... <- tail <- * -> head -> ... */
 void mark(Object *object) {
     if (object->marked) return;
     object->marked = true;
